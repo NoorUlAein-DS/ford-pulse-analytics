@@ -434,7 +434,7 @@ with col_right:
         </div>
         """, unsafe_allow_html=True)
     else:
-        st.info("Adjust inputs on the left and click 'Generate Valuation' to compute the machine learning prediction.")
+        #st.info("")
     
     st.markdown('</div>', unsafe_allow_html=True)
 
