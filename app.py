@@ -31,6 +31,7 @@ st.markdown("""
         background: var(--bg-light);
     }
     
+    /* Custom scrollbar */
     ::-webkit-scrollbar {
         width: 6px;
         height: 6px;
@@ -44,6 +45,7 @@ st.markdown("""
         border-radius: 10px;
     }
     
+    /* Header styling */
     .dashboard-header {
         background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
         padding: 1.8rem 2.5rem;
@@ -72,6 +74,7 @@ st.markdown("""
         font-weight: 300;
     }
     
+    /* Metric card */
     .metric-card {
         background: white;
         padding: 1.5rem;
@@ -120,6 +123,7 @@ st.markdown("""
         color: var(--secondary);
     }
     
+    /* Button styling */
     .stButton > button {
         background: var(--primary);
         color: white;
@@ -137,6 +141,7 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(47, 62, 70, 0.15);
     }
     
+    /* Chart container */
     .chart-container {
         background: white;
         padding: 1.2rem;
@@ -144,6 +149,7 @@ st.markdown("""
         border: 1px solid rgba(202, 210, 197, 0.3);
     }
     
+    /* Valuation result */
     .valuation-box {
         background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
         padding: 1.8rem 2rem;
@@ -152,6 +158,7 @@ st.markdown("""
         border: 1px solid rgba(202, 210, 197, 0.2);
     }
     
+    /* Section headers */
     .section-title {
         color: var(--primary);
         font-weight: 600;
@@ -159,6 +166,7 @@ st.markdown("""
         margin-bottom: 0.5rem;
     }
     
+    /* Footer */
     .footer {
         text-align: center;
         padding: 1.5rem;
@@ -168,7 +176,7 @@ st.markdown("""
         margin-top: 2rem;
     }
 </style>
-""", unsafe_with_html=True)
+""", unsafe_allow_html=True)
 
 # --- LOAD MODELS & DATA ---
 @st.cache_resource
@@ -202,14 +210,15 @@ st.markdown("""
         </div>
     </div>
 </div>
-""", unsafe_with_html=True)
+""", unsafe_allow_html=True)
 
 # --- MAIN LAYOUT ---
 col_left, col_right = st.columns([0.4, 0.6], gap="large")
 
 with col_left:
+    # Custom native box container instead of buggy HTML div to remove the empty white box
     with st.container(border=True):
-        st.markdown('<p class="section-title">▸ Vehicle Details</p>', unsafe_with_html=True)
+        st.markdown('<p class="section-title">▸ Vehicle Details</p>', unsafe_allow_html=True)
         
         car_model = st.selectbox(
             "Model",
@@ -266,9 +275,9 @@ with col_left:
                 format="%.1f"
             )
         
-        st.markdown('<div style="height: 15px;"></div>', unsafe_with_html=True)
+        st.markdown('<div style="height: 15px;"></div>', unsafe_allow_html=True)
         submit = st.button(
-            "Update Valuation",
+            "Generate Valuation",
             use_container_width=True,
             type="primary"
         )
@@ -287,7 +296,7 @@ with col_right:
             <div class="metric-value">${avg_price:,.0f}</div>
             <div class="metric-badge success">▲ +12%</div>
         </div>
-        """, unsafe_with_html=True)
+        """, unsafe_allow_html=True)
     
     with col_m2:
         avg_mileage = filtered_data['mileage'].mean()
@@ -297,7 +306,7 @@ with col_right:
             <div class="metric-value">{avg_mileage:,.0f}</div>
             <div class="metric-badge info">mi</div>
         </div>
-        """, unsafe_with_html=True)
+        """, unsafe_allow_html=True)
     
     with col_m3:
         count_models = len(filtered_data)
@@ -307,7 +316,7 @@ with col_right:
             <div class="metric-value">{count_models:,}</div>
             <div class="metric-badge info">active</div>
         </div>
-        """, unsafe_with_html=True)
+        """, unsafe_allow_html=True)
     
     st.markdown('<br>', unsafe_allow_html=True)
     
@@ -390,39 +399,42 @@ with col_right:
         
     input_encoded = input_encoded.astype(float)
     
-    # Calculate price instantly so UI is never empty
+    # Always execute prediction logic to keep block stable, but conditionally display results
     predicted_price = model.predict(input_encoded)[0]
     market_avg = filtered_data['price'].mean()
     price_diff = ((predicted_price - market_avg) / market_avg) * 100
     
-    st.markdown(f"""
-    <div class="valuation-box">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-            <div>
-                <div style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px;">
-                    Estimated Value
+    if submit:
+        st.markdown(f"""
+        <div class="valuation-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <div>
+                    <div style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Estimated Value
+                    </div>
+                    <div style="font-size: 3rem; font-weight: 700; margin-top: 0.2rem;">
+                        ${predicted_price:,.2f}
+                    </div>
+                    <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.3rem;">
+                        {car_model} · {year} · {fuel_type}
+                    </div>
                 </div>
-                <div style="font-size: 3rem; font-weight: 700; margin-top: 0.2rem;">
-                    ${predicted_price:,.2f}
-                </div>
-                <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.3rem;">
-                    {car_model} · {year} · {fuel_type}
-                </div>
-            </div>
-            <div style="text-align: right; background: rgba(255,255,255,0.08); padding: 1rem 1.5rem; border-radius: 12px;">
-                <div style="font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px;">
-                    Market Comparison
-                </div>
-                <div style="font-size: 1.8rem; font-weight: 600; color: #CAD2C5;">
-                    {price_diff:+.1f}%
-                </div>
-                <div style="font-size: 0.75rem; opacity: 0.6;">
-                    avg ${market_avg:,.0f}
+                <div style="text-align: right; background: rgba(255,255,255,0.08); padding: 1rem 1.5rem; border-radius: 12px;">
+                    <div style="font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Market Comparison
+                    </div>
+                    <div style="font-size: 1.8rem; font-weight: 600; color: #CAD2C5;">
+                        {price_diff:+.1f}%
+                    </div>
+                    <div style="font-size: 0.75rem; opacity: 0.6;">
+                        avg ${market_avg:,.0f}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    """, unsafe_with_html=True)
+        """, unsafe_allow_html=True)
+    else:
+        st.info("Adjust inputs on the left and click 'Generate Valuation' to compute the machine learning prediction.")
     
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -431,4 +443,4 @@ st.markdown("""
 <div class="footer">
     DriveValue Analytics · Powered by Machine Learning
 </div>
-""", unsafe_with_html=True)
+""", unsafe_allow_html=True)
