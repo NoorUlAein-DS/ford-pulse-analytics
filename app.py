@@ -5,156 +5,148 @@ import numpy as np
 import plotly.express as px
 
 # --- PAGE CONFIG ---
-st.set_page_config(layout="wide", page_title="Ford Analytics")
+st.set_page_config(layout="wide", page_title="DriveValue Analytics")
 
-# --- CUSTOM CSS FOR HIGH-END UI ---
+# --- CUSTOM CSS FOR MODERN CAR-VALUATION UI ---
 st.markdown("""
-<style>
+    <style>
+    /* Premium Minimalist Background */
     .stApp {
         background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
     }
+    /* Modern Glassmorphism Card Style */
     div[data-testid="stBlock"] > div:first-child {
         background-color: white;
         padding: 2rem;
         border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.04);
         border: 1px solid #eaeaea;
     }
+    /* Clean Typography */
     h1 {
-        color: #1E3A8A;
-        font-family: 'Helvetica Neue', sans-serif;
+        color: #111827;
+        font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         font-weight: 800;
         letter-spacing: -1px;
-        margin-bottom: 1.5rem;
     }
     h2, h3 {
-        color: #333;
-        font-family: 'Helvetica Neue', sans-serif;
-        font-weight: 600;
-        margin-top: 1rem;
+        color: #1f2937;
+        font-family: '-apple-system', sans-serif;
+        font-weight: 700;
     }
-    div[data-testid="stMetricValue"] > div {
-        font-size: 2.5rem !important;
-        font-weight: 700 !important;
-        color: #10B981 !important;
-    }
-    .stButton>button {
-        background: linear-gradient(90deg, #2563EB 0%, #1D4ED8 100%);
-        color: white;
-        border-radius: 10px;
-        padding: 0.75rem 2rem;
-        font-weight: 600;
-        border: none;
-        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-        transition: all 0.3s ease;
-    }
-    .stButton>button:hover {
-        box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
-        transform: translateY(-2px);
-    }
-    .plotly-graph-div {
+    /* Premium Big Valuation Display */
+    .metric-box {
+        background-color: #ffffff;
+        padding: 1.5rem;
         border-radius: 15px;
-        overflow: hidden;
+        border-left: 5px solid #1e3a8a;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
     }
-</style>
-""", unsafe_allow_html=True)
+    .metric-title {
+        font-size: 1.1rem;
+        color: #6b7280;
+        font-weight: 600;
+    }
+    .metric-value {
+        font-size: 2.8rem;
+        color: #111827;
+        font-weight: 800;
+        margin-top: 0.2rem;
+    }
+    </style>
+""", unsafe_with_html=True)
 
-# --- 1. DATA & MODEL LOADING ---
+# --- LOAD MODELS & DATA ---
 @st.cache_resource
-def load_assets():
-    try:
-        with open('ford_model.pkl', 'rb') as f:
-            model = pickle.load(f)
-        with open('model_columns.pkl', 'rb') as f:
-            model_columns = pickle.load(f)
-        data = pd.read_csv('ford.csv')
-        return model, model_columns, data
-    except FileNotFoundError:
-        st.error("Error: Required files not found.")
-        return None, None, None
+def load_resources():
+    with open('ford_model.pkl', 'rb') as f:
+        model = pickle.load(f)
+    with open('model_columns.pkl', 'rb') as f:
+        model_columns = pickle.load(f)
+    data = pd.read_csv('ford.csv')
+    return model, model_columns, data
 
-model, model_columns, data = load_assets()
+try:
+    model, model_columns, data = load_resources()
+except Exception as e:
+    st.error("Required files not found. Please ensure all model and data files are uploaded.")
+    st.stop()
 
-# --- 2. LAYOUT: TWO COLUMNS ---
-col1, col2 = st.columns([1, 2], gap="large")
+# --- HEADER ---
+st.title("Specifications")
+st.markdown("---")
 
-if model and data is not None:
-    with col1:
-        st.title("🚗 ValuEngine")
-        st.markdown("### Professional Ford Price Prediction")
+# --- MAIN LAYOUT ---
+col_inputs, col_graphs = st.columns([1, 2], gap="large")
+
+with col_inputs:
+    # Form Clean Fields
+    car_model = st.selectbox("Model", sorted(data['model'].unique()))
+    year = st.slider("Year", int(data['year'].min()), 2025, 2018)
+    transmission = st.radio("Transmission", sorted(data['transmission'].unique()))
+    fuel_type = st.selectbox("Fuel Type", sorted(data['fuelType'].unique()))
+    mileage = st.number_input("Mileage", min_value=0, value=15000, step=1000)
+    mpg = st.number_input("MPG (Combined)", min_value=0.0, value=55.4, step=0.1)
+    tax = st.number_input("Annual Tax ($)", min_value=0, value=145)
+    engine_size = st.number_input("Engine Size (L)", min_value=0.0, value=1.0, step=0.1)
+    
+    st.markdown("<br>", unsafe_with_html=True)
+    submit = st.button("Generate Valuation", use_container_width=True, type="primary")
+
+with col_graphs:
+    # Filter data dynamically according to the user input
+    filtered_data = data[data['model'] == car_model]
+    
+    graph_col1, graph_col2 = st.columns(2)
+    
+    with graph_col1:
+        # Dynamic Graph 1: Price Trend Over Years
+        trend_data = filtered_data.groupby('year')['price'].mean().reset_index()
+        fig_year = px.line(trend_data, x='year', y='price', 
+                           title=f"Price Trend: {car_model}",
+                           template="simple_white",
+                           labels={'price': 'Price ($)', 'year': 'Year'})
+        fig_year.update_traces(line_color='#1e3a8a', line_width=3)
+        fig_year.update_layout(hovermode="x unified", margin=dict(l=20, r=20, t=40, b=20))
+        st.plotly_chart(fig_year, use_container_width=True)
+
+    with graph_col2:
+        # Dynamic Graph 2: Engine Size vs Price Scatter
+        fig_engine = px.scatter(filtered_data, x='engineSize', y='price',
+                                title="Price vs Engine Size Distribution",
+                                template="simple_white",
+                                color_discrete_sequence=['#1e3a8a'],
+                                labels={'price': 'Price ($)', 'engineSize': 'Engine Size (L)'})
+        fig_engine.update_layout(margin=dict(l=20, r=20, t=40, b=20))
+        st.plotly_chart(fig_engine, use_container_width=True)
         
-        with st.container():
-            st.subheader("Vehicle Specifications")
-            unique_models = sorted([m.strip() for m in data['model'].unique()])
-            unique_transmissions = sorted(data['transmission'].unique())
-            unique_fuels = sorted(data['fuelType'].unique())
-
-            model_input = st.selectbox("Model", unique_models, index=unique_models.index('Fiesta'))
-            year = st.slider("Year", min_value=1996, max_value=2020, value=2018)
-            transmission_input = st.radio("Transmission", unique_transmissions)
-            fuel_input = st.selectbox("Fuel Type", unique_fuels)
-
-            c1, c2 = st.columns(2)
-            with c1:
-                mileage = st.number_input("Mileage", min_value=0, value=15000, step=1000)
-                tax = st.number_input("Annual Tax (£)", min_value=0, value=145)
-            with c2:
-                mpg = st.number_input("MPG (Combined)", min_value=10.0, value=55.4)
-                engineSize = st.number_input("Engine Size (L)", min_value=0.0, value=1.0, step=0.1)
-
-            predict_btn = st.button("Generate Valuation", use_container_width=True)
-
-            if predict_btn:
-                input_data = pd.DataFrame([{
-                    'model': ' ' + model_input,
-                    'year': year,
-                    'transmission': transmission_input,
-                    'mileage': mileage,
-                    'fuelType': fuel_input,
-                    'tax': tax,
-                    'mpg': int(mpg),
-                    'engineSize': int(engineSize)
-                }])
-
-                input_encoded = pd.get_dummies(input_data)
-                final_features = pd.DataFrame(0, index=[0], columns=model_columns)
-                for col in input_encoded.columns:
-                    if col in final_features.columns:
-                        final_features[col] = input_encoded[col].values
-
-                prediction = model.predict(final_features)
-                
-                st.markdown("---")
-                st.subheader("Market Valuation")
-                st.metric(label=f"Estimated Price for {year} Ford {model_input}", value=f"£{prediction[0]:,.2f}")
-
-    with col2:
-        st.markdown("## 📊 Ford Market Pulse")
-        tab1, tab2 = st.tabs(["Market Drivers", "Model Deep-Dive"])
-
-        with tab1:
-            st.subheader("What Drives Ford Prices?")
-            t1_col1, t1_col2 = st.columns(2)
-
-            with t1_col1:
-                avg_price_year = data.groupby('year')['price'].mean().reset_index()
-                fig_year = px.line(avg_price_year, x='year', y='price', 
-                                    title='Average Price vs. Year (Depreciation Curve)',
-                                    color_discrete_sequence=['#2563EB'])
-                fig_year.update_layout(plot_bgcolor="white")
-                st.plotly_chart(fig_year, use_container_width=True)
-
-            with t1_col2:
-                fig_engine = px.box(data, x='engineSize', y='price',
-                                    title='Price Distribution by Engine Size')
-                fig_engine.update_layout(plot_bgcolor="white")
-                st.plotly_chart(fig_engine, use_container_width=True)
-
-        with tab2:
-            st.subheader("Model-Specific Segmentation")
-            models_to_plot = st.multiselect("Filter Models", unique_models, default=['Fiesta', 'Focus', 'Kuga'])
-            filtered_data = data[data['model'].str.strip().isin(models_to_plot)]
-
-            fig_model = px.box(filtered_data, x='model', y='price', color='model', title='Price Segmentation')
-            fig_model.update_layout(plot_bgcolor="white", showlegend=False)
-            st.plotly_chart(fig_model, use_container_width=True)
+    st.markdown("<br><br>", unsafe_with_html=True)
+    st.subheader("Valuation")
+    
+    # --- PREDICTION LOGIC ---
+    if submit or True: # Keeps valuation visible
+        # Prepare input row with exact same columns as One-Hot Encoding
+        input_data = pd.DataFrame([{
+            'year': year,
+            'mileage': mileage,
+            'tax': tax,
+            'mpg': int(mpg),
+            'engineSize': int(engine_size),
+            f'model_{car_model}': 1,
+            f'transmission_{transmission}': 1,
+            f'fuelType_{fuel_type}': 1
+        }])
+        
+        # Reindex to match training columns, filling missing with 0
+        input_encoded = input_data.reindex(columns=model_columns, fill_value=0)
+        
+        # Predict
+        predicted_price = model.predict(input_encoded)[0]
+        
+        # Output block
+        st.markdown(f"""
+            <div class="metric-box">
+                <div class="metric-title">Estimated Market Value ({car_model.strip()} - {year})</div>
+                <div class="metric-value">${predicted_price:,.2f} <span style="font-size:1.5rem; color:#10b981;">▲ + USD</span></div>
+            </div>
+        """, unsafe_with_html=True)
