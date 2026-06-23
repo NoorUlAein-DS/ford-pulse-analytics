@@ -283,7 +283,17 @@ with col_left:
         )
 
 with col_right:
-    filtered_data = data[data['model'] == car_model]
+    # --- MULTI-INPUT LIVE FILTERING FOR CARDS AND CHARTS ---
+    filtered_data = data[
+        (data['model'] == car_model) & 
+        (data['year'] == year) & 
+        (data['transmission'] == transmission) & 
+        (data['fuelType'] == fuel_type)
+    ]
+    
+    # Fallback to model only filter if current combination doesn't exist in data
+    if filtered_data.empty:
+        filtered_data = data[data['model'] == car_model]
     
     # Metrics row
     col_m1, col_m2, col_m3 = st.columns(3)
