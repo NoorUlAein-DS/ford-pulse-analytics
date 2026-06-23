@@ -8,44 +8,7 @@ import plotly.express as px
 st.set_page_config(layout="wide", page_title="DriveValue Analytics")
 
 # --- CUSTOM CSS FOR MODERN CAR-VALUATION UI ---
-st.markdown("""
-<style>
-.stApp {
-    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-}
-div[data-testid="stBlock"] > div:first-child {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.04);
-    border: 1px solid #eaeaea;
-}
-h1 {
-    color: #111827;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 800;
-    letter-spacing: -1px;
-}
-.metric-box {
-    background-color: #ffffff;
-    padding: 1.5rem;
-    border-radius: 15px;
-    border-left: 5px solid #1e3a8a;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-}
-.metric-title {
-    font-size: 1.1rem;
-    color: #6b7280;
-    font-weight: 600;
-}
-.metric-value {
-    font-size: 2.8rem;
-    color: #111827;
-    font-weight: 800;
-    margin-top: 0.2rem;
-}
-</style>
-""", unsafe_with_html=True)
+st.markdown("<style>.stApp { background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); } div[data-testid='stBlock'] > div:first-child { background-color: white; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.04); border: 1px solid #eaeaea; } h1 { color: #111827; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 800; letter-spacing: -1px; } .metric-box { background-color: #ffffff; padding: 1.5rem; border-radius: 15px; border-left: 5px solid #1e3a8a; box-shadow: 0 4px 15px rgba(0,0,0,0.02); } .metric-title { font-size: 1.1rem; color: #6b7280; font-weight: 600; } .metric-value { font-size: 2.8rem; color: #111827; font-weight: 800; margin-top: 0.2rem; }</style>", unsafe_with_html=True)
 
 # --- LOAD MODELS & DATA ---
 @st.cache_resource
@@ -76,9 +39,9 @@ with col_inputs:
     transmission = st.radio("Transmission", sorted(data['transmission'].unique()))
     fuel_type = st.selectbox("Fuel Type", sorted(data['fuelType'].unique()))
     mileage = st.number_input("Mileage", min_value=0, value=15000, step=1000)
-    mpg = st.number_input("MPG (Combined)", min_value=0.0, value=55.4, step=0.1)
+    mpg = st.number_input("MPG (Combined)", min_value=0, value=55, step=1)
     tax = st.number_input("Annual Tax ($)", min_value=0, value=145)
-    engine_size = st.number_input("Engine Size (L)", min_value=0.0, value=1.0, step=0.1)
+    engine_size = st.number_input("Engine Size (L)", min_value=0, value=1, step=1)
     
     st.markdown("<br>", unsafe_with_html=True)
     submit = st.button("Generate Valuation", use_container_width=True, type="primary")
@@ -107,18 +70,17 @@ with col_graphs:
     st.markdown("<br><br>", unsafe_with_html=True)
     st.subheader("Valuation")
     
-    # --- PREDICTION LOGIC ---
-    # Create row with 0s
+    # --- PREDICTION LOGIC WITH EXACT COLAB FORMAT ---
     input_encoded = pd.DataFrame(0, index=[0], columns=model_columns)
     
-    # Fill numericals
-    input_encoded['year'] = year
-    input_encoded['mileage'] = mileage
-    input_encoded['tax'] = tax
+    # Int mappings according to Colab Notebook
+    input_encoded['year'] = int(year)
+    input_encoded['mileage'] = int(mileage)
+    input_encoded['tax'] = int(tax)
     input_encoded['mpg'] = int(mpg)
     input_encoded['engineSize'] = int(engine_size)
     
-    # Fill One-Hot columns exactly matching Colab dummy names
+    # Categorical logic matching dummy names
     model_col = f"model_{car_model}"
     trans_col = f"transmission_{transmission}"
     fuel_col = f"fuelType_{fuel_type}"
@@ -130,7 +92,8 @@ with col_graphs:
     if fuel_col in input_encoded.columns:
         input_encoded[fuel_col] = 1
         
-    # Predict cleanly
+    # Final conversion to match exact training structure
+    input_encoded = input_encoded.astype(int)
     predicted_price = model.predict(input_encoded)[0]
     
     st.markdown(f"""
