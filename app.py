@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 st.set_page_config(
     layout="wide", 
     page_title="DriveValue Analytics",
-    page_icon="🚗",
+    page_icon="🦋",
     initial_sidebar_state="collapsed"
 )
 
