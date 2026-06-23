@@ -13,211 +13,256 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- CUSTOM CSS FOR PREMIUM DASHBOARD ---
+# --- CUSTOM CSS WITH FOREST MIST COLOR PALETTE ---
 st.markdown("""
 <style>
-    /* Main background with soft gradient */
+    /* Color variables from palette */
+    :root {
+        --primary: #2F3E46;
+        --secondary: #354F52;
+        --accent: #04A98C;
+        --light: #CAD2C5;
+        --dark: #2F3E46;
+        --text-primary: #2F3E46;
+        --text-secondary: #354F52;
+        --bg-light: #F5F7F4;
+    }
+    
+    /* Main background */
     .stApp {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        background: var(--bg-light);
     }
     
     /* Custom scrollbar */
     ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
+        width: 6px;
+        height: 6px;
     }
     ::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: var(--light);
         border-radius: 10px;
     }
     ::-webkit-scrollbar-thumb {
-        background: #6c757d;
+        background: var(--accent);
         border-radius: 10px;
     }
     ::-webkit-scrollbar-thumb:hover {
-        background: #495057;
+        background: var(--secondary);
     }
     
-    /* Main container with glassmorphism effect */
+    /* Main container */
     .main-container {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(10px);
-        padding: 2rem;
-        border-radius: 24px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.08);
-        border: 1px solid rgba(255,255,255,0.3);
-        margin: 1rem 0;
+        background: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(47, 62, 70, 0.06);
+        border: 1px solid rgba(202, 210, 197, 0.3);
+        margin: 0.5rem 0;
     }
     
     /* Header styling */
     .dashboard-header {
-        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-        padding: 2rem 3rem;
-        border-radius: 20px;
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 30px rgba(52, 152, 219, 0.3);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        padding: 1.8rem 2.5rem;
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(202, 210, 197, 0.2);
     }
     
     .dashboard-title {
         color: white;
         font-family: 'Inter', -apple-system, sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
+        font-weight: 600;
+        font-size: 2.2rem;
         margin: 0;
-        letter-spacing: -0.5px;
+        letter-spacing: -0.3px;
+    }
+    
+    .dashboard-title span {
+        color: var(--accent);
     }
     
     .dashboard-subtitle {
-        color: rgba(255,255,255,0.8);
-        font-size: 1.1rem;
-        margin-top: 0.5rem;
+        color: rgba(255,255,255,0.75);
+        font-size: 1rem;
+        margin-top: 0.3rem;
         font-weight: 300;
     }
     
-    /* Input card styling */
+    /* Input card */
     .input-card {
         background: white;
-        padding: 1.8rem;
-        border-radius: 20px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.04);
-        border: 1px solid #e9ecef;
-        transition: all 0.3s ease;
+        padding: 1.5rem;
+        border-radius: 16px;
+        border: 1px solid rgba(202, 210, 197, 0.4);
+        transition: all 0.2s ease;
     }
     
     .input-card:hover {
-        box-shadow: 0 12px 35px rgba(0,0,0,0.08);
-        transform: translateY(-2px);
+        border-color: var(--accent);
+        box-shadow: 0 4px 20px rgba(4, 169, 140, 0.08);
     }
     
-    /* Metric card - premium style */
+    /* Metric card */
     .metric-card {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        padding: 2rem;
-        border-radius: 20px;
-        border: 1px solid #e9ecef;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.04);
-        position: relative;
-        overflow: hidden;
+        background: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        border-left: 4px solid var(--accent);
+        border: 1px solid rgba(202, 210, 197, 0.3);
+        transition: all 0.2s ease;
     }
     
-    .metric-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #3498db, #2ecc71);
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(47, 62, 70, 0.06);
     }
     
     .metric-label {
-        font-size: 0.9rem;
-        color: #6c757d;
-        font-weight: 600;
+        font-size: 0.8rem;
+        color: var(--secondary);
+        font-weight: 500;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
     
     .metric-value {
-        font-size: 3.2rem;
-        font-weight: 800;
-        color: #2c3e50;
-        margin-top: 0.3rem;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-top: 0.2rem;
         font-family: 'Inter', sans-serif;
     }
     
-    .metric-change {
+    .metric-badge {
         display: inline-block;
-        padding: 0.3rem 1rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-top: 0.5rem;
+        padding: 0.2rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        margin-top: 0.3rem;
     }
     
-    .metric-change.positive {
-        background: #d4edda;
-        color: #155724;
+    .metric-badge.success {
+        background: rgba(4, 169, 140, 0.12);
+        color: var(--accent);
     }
     
-    .metric-change.negative {
-        background: #f8d7da;
-        color: #721c24;
+    .metric-badge.info {
+        background: rgba(53, 79, 82, 0.08);
+        color: var(--secondary);
     }
     
     /* Button styling */
     .stButton > button {
-        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        background: var(--primary);
         color: white;
         border: none;
-        padding: 0.8rem 2rem;
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        padding: 0.7rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
     }
     
     .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        background: var(--secondary);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(47, 62, 70, 0.15);
     }
     
-    /* Selectbox styling */
-    .stSelectbox > div > div {
-        border-radius: 10px;
-        border: 2px solid #e9ecef;
-        transition: all 0.3s ease;
+    .stButton > button:active {
+        transform: translateY(0);
     }
     
-    .stSelectbox > div > div:hover {
-        border-color: #3498db;
-    }
-    
-    /* Number input styling */
+    /* Form elements */
+    .stSelectbox > div > div,
     .stNumberInput > div > div {
         border-radius: 10px;
-        border: 2px solid #e9ecef;
+        border: 1.5px solid rgba(202, 210, 197, 0.5);
+        transition: all 0.2s ease;
     }
     
-    /* Slider styling */
+    .stSelectbox > div > div:hover,
+    .stNumberInput > div > div:hover {
+        border-color: var(--accent);
+    }
+    
+    .stSelectbox > div > div:focus-within,
+    .stNumberInput > div > div:focus-within {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(4, 169, 140, 0.1);
+    }
+    
+    /* Slider */
     .stSlider > div > div {
-        background: #3498db;
+        background: var(--accent);
     }
     
-    /* Radio button styling */
+    /* Radio buttons */
     .stRadio > div {
-        gap: 1rem;
+        gap: 0.8rem;
     }
     
     .stRadio > div > label {
         background: white;
-        padding: 0.5rem 1.5rem;
-        border-radius: 10px;
-        border: 2px solid #e9ecef;
-        transition: all 0.3s ease;
+        padding: 0.4rem 1.2rem;
+        border-radius: 8px;
+        border: 1.5px solid rgba(202, 210, 197, 0.5);
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
     }
     
     .stRadio > div > label:hover {
-        border-color: #3498db;
-        background: #f8f9fa;
+        border-color: var(--accent);
+        background: rgba(4, 169, 140, 0.03);
     }
     
-    /* Divider styling */
+    /* Divider */
     .custom-divider {
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #3498db, transparent);
-        margin: 2rem 0;
-        opacity: 0.3;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        margin: 1.5rem 0;
+        opacity: 0.2;
     }
     
     /* Chart container */
     .chart-container {
         background: white;
+        padding: 1.2rem;
+        border-radius: 16px;
+        border: 1px solid rgba(202, 210, 197, 0.3);
+    }
+    
+    /* Valuation result */
+    .valuation-box {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        padding: 1.8rem 2rem;
+        border-radius: 16px;
+        color: white;
+        border: 1px solid rgba(202, 210, 197, 0.2);
+    }
+    
+    /* Section headers */
+    .section-title {
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    /* Footer */
+    .footer {
+        text-align: center;
         padding: 1.5rem;
-        border-radius: 20px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.04);
-        border: 1px solid #e9ecef;
+        color: var(--secondary);
+        font-size: 0.85rem;
+        border-top: 1px solid rgba(202, 210, 197, 0.3);
+        margin-top: 2rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -235,21 +280,21 @@ def load_resources():
 try:
     model, model_columns, data = load_resources()
 except Exception as e:
-    st.error("⚠️ Required files not found. Please ensure all model and data files are uploaded.")
+    st.error("Required files not found. Please ensure all model and data files are uploaded.")
     st.stop()
 
-# --- HEADER SECTION ---
+# --- HEADER ---
 st.markdown("""
 <div class="dashboard-header">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
         <div>
-            <h1 class="dashboard-title">🚗 DriveValue Analytics</h1>
-            <p class="dashboard-subtitle">Intelligent Car Valuation & Market Intelligence Platform</p>
+            <h1 class="dashboard-title">DriveValue <span>Analytics</span></h1>
+            <p class="dashboard-subtitle">Intelligent vehicle valuation platform</p>
         </div>
-        <div style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">
-            <span>📊 Live Market Data</span>
-            <span style="margin: 0 1rem;">|</span>
-            <span>🔄 Real-time Valuation</span>
+        <div style="display: flex; gap: 1.5rem; color: rgba(255,255,255,0.6); font-size: 0.85rem;">
+            <span>● Live</span>
+            <span>|</span>
+            <span>ML Powered</span>
         </div>
     </div>
 </div>
@@ -260,33 +305,29 @@ col_left, col_right = st.columns([0.4, 0.6], gap="large")
 
 with col_left:
     st.markdown('<div class="input-card">', unsafe_allow_html=True)
-    st.markdown("### 📋 Vehicle Specifications")
-    st.markdown("---")
+    st.markdown('<p class="section-title">▸ Vehicle Details</p>', unsafe_allow_html=True)
     
     car_model = st.selectbox(
         "Model",
-        sorted(data['model'].unique()),
-        help="Select the vehicle model for valuation"
+        sorted(data['model'].unique())
     )
     
     year = st.slider(
-        "Registration Year",
+        "Year",
         int(data['year'].min()),
         2025,
-        2018,
-        help="Year of first registration"
+        2018
     )
     
     transmission = st.radio(
-        "Transmission Type",
+        "Transmission",
         sorted(data['transmission'].unique()),
         horizontal=True
     )
     
     fuel_type = st.selectbox(
         "Fuel Type",
-        sorted(data['fuelType'].unique()),
-        help="Primary fuel type of the vehicle"
+        sorted(data['fuelType'].unique())
     )
     
     col_mileage, col_mpg = st.columns(2)
@@ -295,144 +336,136 @@ with col_left:
             "Mileage",
             min_value=0,
             value=15000,
-            step=1000,
-            help="Total miles driven"
+            step=1000
         )
     with col_mpg:
         mpg = st.number_input(
-            "MPG Combined",
+            "MPG",
             min_value=0,
             value=55,
-            step=1,
-            help="Miles per gallon (combined cycle)"
+            step=1
         )
     
     col_tax, col_engine = st.columns(2)
     with col_tax:
         tax = st.number_input(
-            "Annual Tax ($)",
+            "Tax ($)",
             min_value=0,
-            value=145,
-            help="Annual vehicle tax amount"
+            value=145
         )
     with col_engine:
         engine_size = st.number_input(
-            "Engine Size (L)",
+            "Engine (L)",
             min_value=0.5,
             value=1.0,
             step=0.1,
-            format="%.1f",
-            help="Engine displacement in liters"
+            format="%.1f"
         )
     
-    st.markdown("---")
+    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
     submit = st.button(
-        "🚀 Generate Valuation",
+        "Generate Valuation",
         use_container_width=True,
         type="primary"
     )
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_right:
-    # Filter data for selected model
     filtered_data = data[data['model'] == car_model]
     
-    # Top metrics row
-    col_metric1, col_metric2, col_metric3 = st.columns(3)
+    # Metrics row
+    col_m1, col_m2, col_m3 = st.columns(3)
     
-    with col_metric1:
+    with col_m1:
         avg_price = filtered_data['price'].mean()
         st.markdown(f"""
         <div class="metric-card">
-            <div class="metric-label">📈 Average Price</div>
+            <div class="metric-label">Average Price</div>
             <div class="metric-value">${avg_price:,.0f}</div>
-            <div class="metric-change positive">⬆ +12.5% this year</div>
+            <div class="metric-badge success">▲ +12%</div>
         </div>
         """, unsafe_allow_html=True)
     
-    with col_metric2:
+    with col_m2:
         avg_mileage = filtered_data['mileage'].mean()
         st.markdown(f"""
         <div class="metric-card">
-            <div class="metric-label">📊 Avg. Mileage</div>
+            <div class="metric-label">Avg Mileage</div>
             <div class="metric-value">{avg_mileage:,.0f}</div>
-            <div class="metric-change">🚗 miles</div>
+            <div class="metric-badge info">mi</div>
         </div>
         """, unsafe_allow_html=True)
     
-    with col_metric3:
+    with col_m3:
         count_models = len(filtered_data)
         st.markdown(f"""
         <div class="metric-card">
-            <div class="metric-label">📋 Listings</div>
+            <div class="metric-label">Listings</div>
             <div class="metric-value">{count_models:,}</div>
-            <div class="metric-change">📌 active listings</div>
+            <div class="metric-badge info">active</div>
         </div>
         """, unsafe_allow_html=True)
     
     st.markdown('<br>', unsafe_allow_html=True)
     
-    # Charts section
+    # Charts
     with st.container():
         st.markdown('<div class="chart-container">', unsafe_allow_html=True)
         chart_col1, chart_col2 = st.columns(2)
         
         with chart_col1:
-            # Price trend line chart
             trend_data = filtered_data.groupby('year')['price'].mean().reset_index()
             fig_trend = px.line(
                 trend_data,
                 x='year',
                 y='price',
-                title=f"💰 Price Trend: {car_model}",
+                title="Price Trend",
                 template="plotly_white",
                 labels={'price': 'Price ($)', 'year': 'Year'}
             )
             fig_trend.update_traces(
-                line_color='#3498db',
+                line_color='#04A98C',
                 line_width=3,
                 fill='tozeroy',
-                fillcolor='rgba(52, 152, 219, 0.1)'
+                fillcolor='rgba(4, 169, 140, 0.08)'
             )
             fig_trend.update_layout(
                 hovermode='x unified',
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)',
-                font=dict(family="Inter", size=12),
-                margin=dict(l=40, r=20, t=50, b=40)
+                margin=dict(l=30, r=20, t=40, b=30),
+                font=dict(size=11)
             )
             st.plotly_chart(fig_trend, use_container_width=True)
 
         with chart_col2:
-            # Engine size distribution
             fig_engine = px.scatter(
                 filtered_data,
                 x='engineSize',
                 y='price',
-                title=f"⚙️ Price vs Engine Size",
+                title="Price vs Engine",
                 template="plotly_white",
-                labels={'price': 'Price ($)', 'engineSize': 'Engine Size (L)'},
-                color_discrete_sequence=['#2ecc71']
+                labels={'price': 'Price ($)', 'engineSize': 'Engine (L)'},
+                color_discrete_sequence=['#04A98C']
             )
             fig_engine.update_traces(
-                marker=dict(size=10, opacity=0.7, line=dict(width=1, color='white'))
+                marker=dict(size=8, opacity=0.6, line=dict(width=1, color='white'))
             )
             fig_engine.update_layout(
                 hovermode='closest',
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)',
-                font=dict(family="Inter", size=12),
-                margin=dict(l=40, r=20, t=50, b=40)
+                margin=dict(l=30, r=20, t=40, b=30),
+                font=dict(size=11)
             )
             st.plotly_chart(fig_engine, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown('<br>', unsafe_allow_html=True)
     
-    # Valuation result section
+    # Valuation result
     st.markdown('<div class="chart-container">', unsafe_allow_html=True)
     
-    # --- PREDICTION LOGIC ---
     input_encoded = pd.DataFrame(0, index=[0], columns=model_columns)
     
     input_encoded['year'] = int(year)
@@ -456,36 +489,32 @@ with col_right:
     
     if submit:
         predicted_price = model.predict(input_encoded)[0]
-        
-        # Get market comparison
         market_avg = filtered_data['price'].mean()
         price_diff = ((predicted_price - market_avg) / market_avg) * 100
         
         st.markdown(f"""
-        <div style="
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            padding: 2rem;
-            border-radius: 20px;
-            color: white;
-            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.3);
-        ">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="valuation-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                 <div>
-                    <div style="font-size: 0.9rem; opacity: 0.8;">🏷️ Estimated Market Value</div>
-                    <div style="font-size: 3.5rem; font-weight: 800; margin-top: 0.3rem;">
+                    <div style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Estimated Value
+                    </div>
+                    <div style="font-size: 3rem; font-weight: 700; margin-top: 0.2rem;">
                         ${predicted_price:,.2f}
                     </div>
-                    <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 0.5rem;">
-                        {car_model} • {year} • {fuel_type}
+                    <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.3rem;">
+                        {car_model} · {year} · {fuel_type}
                     </div>
                 </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 0.9rem; opacity: 0.8;">Market Comparison</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; margin-top: 0.3rem;">
+                <div style="text-align: right; background: rgba(255,255,255,0.08); padding: 1rem 1.5rem; border-radius: 12px;">
+                    <div style="font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Market Comparison
+                    </div>
+                    <div style="font-size: 1.8rem; font-weight: 600; color: #CAD2C5;">
                         {price_diff:+.1f}%
                     </div>
-                    <div style="font-size: 0.8rem; opacity: 0.8;">
-                        vs. market avg ${market_avg:,.0f}
+                    <div style="font-size: 0.75rem; opacity: 0.6;">
+                        avg ${market_avg:,.0f}
                     </div>
                 </div>
             </div>
@@ -496,18 +525,7 @@ with col_right:
 
 # --- FOOTER ---
 st.markdown("""
-<div style="
-    text-align: center;
-    padding: 2rem;
-    color: #6c757d;
-    font-size: 0.9rem;
-    margin-top: 2rem;
-    border-top: 1px solid #e9ecef;
-">
-    <span>🚗 DriveValue Analytics</span>
-    <span style="margin: 0 1rem;">•</span>
-    <span>Powered by Machine Learning</span>
-    <span style="margin: 0 1rem;">•</span>
-    <span>© 2026 All Rights Reserved</span>
+<div class="footer">
+    DriveValue Analytics · Powered by Machine Learning
 </div>
 """, unsafe_allow_html=True)
