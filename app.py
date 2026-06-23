@@ -9,14 +9,13 @@ import plotly.graph_objects as go
 st.set_page_config(
     layout="wide", 
     page_title="DriveValue Analytics",
-    page_icon="🚗",
+    page_icon="🕸",
     initial_sidebar_state="collapsed"
 )
 
 # --- CUSTOM CSS WITH FOREST MIST COLOR PALETTE ---
 st.markdown("""
 <style>
-    /* Color variables from palette */
     :root {
         --primary: #2F3E46;
         --secondary: #354F52;
@@ -28,7 +27,6 @@ st.markdown("""
         --bg-light: #F5F7F4;
     }
     
-    /* Main background */
     .stApp {
         background: var(--bg-light);
     }
@@ -45,19 +43,6 @@ st.markdown("""
     ::-webkit-scrollbar-thumb {
         background: var(--accent);
         border-radius: 10px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        background: var(--secondary);
-    }
-    
-    /* Main container */
-    .main-container {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(47, 62, 70, 0.06);
-        border: 1px solid rgba(202, 210, 197, 0.3);
-        margin: 0.5rem 0;
     }
     
     /* Header styling */
@@ -89,26 +74,11 @@ st.markdown("""
         font-weight: 300;
     }
     
-    /* Input card */
-    .input-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 16px;
-        border: 1px solid rgba(202, 210, 197, 0.4);
-        transition: all 0.2s ease;
-    }
-    
-    .input-card:hover {
-        border-color: var(--accent);
-        box-shadow: 0 4px 20px rgba(4, 169, 140, 0.08);
-    }
-    
     /* Metric card */
     .metric-card {
         background: white;
         padding: 1.5rem;
         border-radius: 16px;
-        border-left: 4px solid var(--accent);
         border: 1px solid rgba(202, 210, 197, 0.3);
         transition: all 0.2s ease;
     }
@@ -163,68 +133,12 @@ st.markdown("""
         font-weight: 500;
         font-size: 0.95rem;
         transition: all 0.2s ease;
-        border: 1px solid transparent;
     }
     
     .stButton > button:hover {
         background: var(--secondary);
         transform: translateY(-1px);
         box-shadow: 0 4px 15px rgba(47, 62, 70, 0.15);
-    }
-    
-    .stButton > button:active {
-        transform: translateY(0);
-    }
-    
-    /* Form elements */
-    .stSelectbox > div > div,
-    .stNumberInput > div > div {
-        border-radius: 10px;
-        border: 1.5px solid rgba(202, 210, 197, 0.5);
-        transition: all 0.2s ease;
-    }
-    
-    .stSelectbox > div > div:hover,
-    .stNumberInput > div > div:hover {
-        border-color: var(--accent);
-    }
-    
-    .stSelectbox > div > div:focus-within,
-    .stNumberInput > div > div:focus-within {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(4, 169, 140, 0.1);
-    }
-    
-    /* Slider */
-    .stSlider > div > div {
-        background: var(--accent);
-    }
-    
-    /* Radio buttons */
-    .stRadio > div {
-        gap: 0.8rem;
-    }
-    
-    .stRadio > div > label {
-        background: white;
-        padding: 0.4rem 1.2rem;
-        border-radius: 8px;
-        border: 1.5px solid rgba(202, 210, 197, 0.5);
-        transition: all 0.2s ease;
-        font-size: 0.9rem;
-    }
-    
-    .stRadio > div > label:hover {
-        border-color: var(--accent);
-        background: rgba(4, 169, 140, 0.03);
-    }
-    
-    /* Divider */
-    .custom-divider {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--accent), transparent);
-        margin: 1.5rem 0;
-        opacity: 0.2;
     }
     
     /* Chart container */
@@ -248,11 +162,8 @@ st.markdown("""
     .section-title {
         color: var(--primary);
         font-weight: 600;
-        font-size: 1.1rem;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
     }
     
     /* Footer */
@@ -290,7 +201,7 @@ st.markdown("""
         <div>
             <h1 class="dashboard-title">DriveValue <span>Analytics</span></h1>
             <p class="dashboard-subtitle">Intelligent vehicle valuation platform</p>
-            <p class="dashboard-subtitle">Developed By Aein </p>
+            <p class="dashboard-subtitle">Developed By Aein</p>
         </div>
         <div style="display: flex; gap: 1.5rem; color: rgba(255,255,255,0.6); font-size: 0.85rem;">
             <span>● Live</span>
@@ -305,71 +216,71 @@ st.markdown("""
 col_left, col_right = st.columns([0.4, 0.6], gap="large")
 
 with col_left:
-    st.markdown('<div class="input-card">', unsafe_allow_html=True)
-    st.markdown('<p class="section-title">▸ Vehicle Details</p>', unsafe_allow_html=True)
-    
-    car_model = st.selectbox(
-        "Model",
-        sorted(data['model'].unique())
-    )
-    
-    year = st.slider(
-        "Year",
-        int(data['year'].min()),
-        2025,
-        2018
-    )
-    
-    transmission = st.radio(
-        "Transmission",
-        sorted(data['transmission'].unique()),
-        horizontal=True
-    )
-    
-    fuel_type = st.selectbox(
-        "Fuel Type",
-        sorted(data['fuelType'].unique())
-    )
-    
-    col_mileage, col_mpg = st.columns(2)
-    with col_mileage:
-        mileage = st.number_input(
-            "Mileage",
-            min_value=0,
-            value=15000,
-            step=1000
+    # Custom native box container instead of buggy HTML div to remove the empty white box
+    with st.container(border=True):
+        st.markdown('<p class="section-title">▸ Vehicle Details</p>', unsafe_allow_html=True)
+        
+        car_model = st.selectbox(
+            "Model",
+            sorted(data['model'].unique())
         )
-    with col_mpg:
-        mpg = st.number_input(
-            "MPG",
-            min_value=0,
-            value=55,
-            step=1
+        
+        year = st.slider(
+            "Year",
+            int(data['year'].min()),
+            2025,
+            2018
         )
-    
-    col_tax, col_engine = st.columns(2)
-    with col_tax:
-        tax = st.number_input(
-            "Tax ($)",
-            min_value=0,
-            value=145
+        
+        transmission = st.radio(
+            "Transmission",
+            sorted(data['transmission'].unique()),
+            horizontal=True
         )
-    with col_engine:
-        engine_size = st.number_input(
-            "Engine (L)",
-            min_value=0.5,
-            value=1.0,
-            step=0.1,
-            format="%.1f"
+        
+        fuel_type = st.selectbox(
+            "Fuel Type",
+            sorted(data['fuelType'].unique())
         )
-    
-    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
-    submit = st.button(
-        "Generate Valuation",
-        use_container_width=True,
-        type="primary"
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
+        
+        col_mileage, col_mpg = st.columns(2)
+        with col_mileage:
+            mileage = st.number_input(
+                "Mileage",
+                min_value=0,
+                value=15000,
+                step=1000
+            )
+        with col_mpg:
+            mpg = st.number_input(
+                "MPG",
+                min_value=0,
+                value=55,
+                step=1
+            )
+        
+        col_tax, col_engine = st.columns(2)
+        with col_tax:
+            tax = st.number_input(
+                "Tax ($)",
+                min_value=0,
+                value=145
+            )
+        with col_engine:
+            engine_size = st.number_input(
+                "Engine (L)",
+                min_value=0.5,
+                value=1.0,
+                step=0.1,
+                format="%.1f"
+            )
+        
+        st.markdown('<div style="height: 15px;"></div>', unsafe_allow_html=True)
+        submit = st.button(
+            "Generate Valuation",
+            use_container_width=True,
+            type="primary"
+        )
 
 with col_right:
     filtered_data = data[data['model'] == car_model]
@@ -488,11 +399,12 @@ with col_right:
         
     input_encoded = input_encoded.astype(float)
     
+    # Always execute prediction logic to keep block stable, but conditionally display results
+    predicted_price = model.predict(input_encoded)[0]
+    market_avg = filtered_data['price'].mean()
+    price_diff = ((predicted_price - market_avg) / market_avg) * 100
+    
     if submit:
-        predicted_price = model.predict(input_encoded)[0]
-        market_avg = filtered_data['price'].mean()
-        price_diff = ((predicted_price - market_avg) / market_avg) * 100
-        
         st.markdown(f"""
         <div class="valuation-box">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
@@ -521,6 +433,8 @@ with col_right:
             </div>
         </div>
         """, unsafe_allow_html=True)
+    else:
+        st.info("Adjust inputs on the left and click 'Generate Valuation' to compute the machine learning prediction.")
     
     st.markdown('</div>', unsafe_allow_html=True)
 
