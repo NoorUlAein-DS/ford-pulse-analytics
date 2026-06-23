@@ -290,6 +290,7 @@ st.markdown("""
         <div>
             <h1 class="dashboard-title">DriveValue <span>Analytics</span></h1>
             <p class="dashboard-subtitle">Intelligent vehicle valuation platform</p>
+            <p class="dashboard-subtitle">Developed By Aein </p>
         </div>
         <div style="display: flex; gap: 1.5rem; color: rgba(255,255,255,0.6); font-size: 0.85rem;">
             <span>● Live</span>
