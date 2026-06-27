@@ -204,7 +204,7 @@ st.markdown("""
             <p class="dashboard-subtitle">Developed By Aein</p>
         </div>
         <div style="display: flex; gap: 1.5rem; color: rgba(255,255,255,0.6); font-size: 0.85rem;">
-            <span>● Live</span>
+            <span>Live</span>
             <span>|</span>
             <span>ML Powered</span>
         </div>
@@ -304,7 +304,7 @@ with col_right:
         <div class="metric-card">
             <div class="metric-label">Average Price</div>
             <div class="metric-value">${avg_price:,.0f}</div>
-            <div class="metric-badge success">▲ +12%</div>
+            <div class="metric-badge success">+12%</div>
         </div>
         """, unsafe_allow_html=True)
     
